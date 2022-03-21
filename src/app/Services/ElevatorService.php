@@ -8,6 +8,7 @@ use App\Enums\Floor;
 use App\Enums\State;
 use App\Models\Elevator;
 use App\Models\ExternalRequest;
+use App\Models\InternalRequest;
 use Illuminate\Support\Carbon;
 
 class ElevatorService
@@ -167,5 +168,34 @@ class ElevatorService
         }
 
         return $waitingFloor;
+    }
+
+    /**
+     * @param Elevator $elevator
+     * @param int $key
+     * @return void
+     */
+    public function displayInfo(Elevator $elevator, int $key): void
+    {
+        echo "<b>Elevator" . $key + 1 . ":</b>" .
+            "<br><b>State</b>: " . $elevator->getState()->name .
+            "<br><b>Floor</b>: " . $elevator->getCurrentFloorValue() .
+            "<br><b>Direction</b>: " . $elevator->getDirection()->name .
+            "<br><b>State</b>: " . $elevator->getState()->name .
+            "<br><b>Door</b>: " . $elevator->getDoor()->name .
+            "<br><b>List</b>: ";
+    }
+
+    /**
+     * @param Elevator $elevator
+     * @return void
+     */
+    public function displayRoute(Elevator $elevator): void
+    {
+        foreach ($elevator->getList() as $request) {
+            if ($request instanceof ExternalRequest) echo $request->getSourceFloorValue() . $request->getDirection()->name . " ";
+            if ($request instanceof InternalRequest) echo $request->getDestinationFloorValue() . " ";
+        }
+        echo "<br><br>";
     }
 }

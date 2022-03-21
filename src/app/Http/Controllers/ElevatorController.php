@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Direction;
+use App\Enums\Floor;
 use App\Enums\State;
 use App\Models\Dispatcher;
 use App\Models\Elevator;
+use App\Models\ExternalRequest;
 use App\Models\InternalRequest;
 use App\Services\ElevatorService;
 use App\Services\RequestService;
@@ -49,8 +52,23 @@ class ElevatorController extends Controller
         $elevator2 = new Elevator();
         $elevators = [$elevator1, $elevator2];
 
-        foreach ($elevators as $elevator) {
+        // Scenario
+        $elevator2->setCurrentFloor(Floor::Second);
+        $elevator2->setDirection(Direction::Up);
+
+        $dispatcher->addExternalRequestToElevatorList(new ExternalRequest(Direction::Down, Floor::Third), $elevators);
+        $dispatcher->addInternalRequestToList(new InternalRequest(Floor::Fourth, $elevator2));
+        $dispatcher->addInternalRequestToList(new InternalRequest(Floor::First, $elevator1));
+        $dispatcher->addExternalRequestToElevatorList(new ExternalRequest(Direction::Up, Floor::First), $elevators);
+        $dispatcher->addInternalRequestToList(new InternalRequest(Floor::Third, $elevator1));
+        $dispatcher->addInternalRequestToList(new InternalRequest(Floor::First, $elevator2));
+        $dispatcher->addExternalRequestToElevatorList(new ExternalRequest(Direction::Up, Floor::Ground), $elevators);
+
+        foreach ($elevators as $key => $elevator) {
+
+            $this->elevatorService->displayInfo($elevator, $key);
             $this->elevatorService->prepareRoute($elevator);
+            $this->elevatorService->displayRoute($elevator);
 
             while ($list = $elevator->getList()) {
                 $request = reset($list);
