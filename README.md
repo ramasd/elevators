@@ -9,8 +9,16 @@ Elevators System
 - Go to project directory:
 >`cd elevators`
 
-- run command (you need to have *Docker*):
->`docker-compose up -d server`
+- Rename *.env.example* to *.env*:
+>`mv src\.env.example src\.env`\
+or\
+>`move src\.env.example src\.env`
 
-- go to:
+- run commands (need to have *Docker*):
+>`docker-compose up -d server`\
+>`docker-compose run composer install`\
+>`docker-compose run artisan key:generate`
+
+
+- type in your browser:
 >`http://localhost:8000`
